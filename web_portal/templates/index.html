@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+  <meta charset="UTF-8">
+  <title>Flask React</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.material.min.css">
+
+  <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+  <link href="//cdn.muicss.com/mui-0.9.16/css/mui.min.css" rel="stylesheet" type="text/css" />
+  <script src="//cdn.muicss.com/mui-0.9.16/js/mui.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.7/dialog-polyfill.js"></script>
+
+  <script src="/static/js/gmaps.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4">
+  </script>
+  <!-- styles -->
+  <style>
+    #insert_button {
+      margin-bottom: 60px;
+    }
+
+    #map {
+      width: 100%;
+      height: 400px;
+    }
+
+    .selected {
+      background-color: #eee;
+    }
+
+    thead,
+    tbody {
+      display: block;
+    }
+
+    tbody {
+      height: 400px;
+      /* Just for the demo          */
+      overflow-y: auto;
+      /* Trigger vertical scroll    */
+      overflow-x: hidden;
+      /* Hide the horizontal scroll */
+    }
+
+    .mdl-data-table {
+      width: 50%;
+    }
+
+    table {
+      width: 10%;
+      /* Optional */
+    }
+
+    tbody td,
+    thead th {
+
+      width: 50%;
+      /* Optional */
+    }
+
+    th:first-child,
+    td:first-child {
+      float: left;
+    }
+
+    #button_group span {
+      float: left;
+    }
+
+    #button_group span i {
+      font-size: 3em;
+    }
+
+    .mdl-data-table thead .mdl-data-table__select {
+      margin-top: 18px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="mdl-grid">
+    <div id="demo" class="mdl-js-snackbar mdl-snackbar">
+      <div class="mdl-snackbar__text"></div>
+      <button class="mdl-snackbar__action" type="button"></button>
+    </div>
+    <div class="mdl-cell mdl-cell--12-col-phone mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
+
+      <center>
+        <h1>Web Portal</h1>
+      </center>
+    </div>
+
+
+    <div class="mdl-cell mdl-cell--8-col-phone mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
+      <center>
+        <table id="dataTable" class="mdl-data-table" width="100%">
+          <thead>
+            <tr>
+
+              <th style="padding-top:17px">pointName</th>
+              <th>pointLatitude</th>
+              <th>pointLongitude</th>
+
+            </tr>
+          </thead>
+          <tbody id="dataset">
+            {% for point in points %}
+            <tr>
+
+              <td>{{ point.pointName }}</td>
+              <td>{{ point.pointLatitude }}</td>
+              <td>{{ point.pointLongitude }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div id="button_group" class="mdl-cell mdl-cell--8-col-phone mdl-cell--12-col-tablet mdl-cell--6-col-desktop">
+          <span id="add_button" class="dialog-button" style="cursor:pointer"><i style="color:black;" class="material-icons">add</i></span>
+          <span id="edit_button" class="edit-dialog-button" style="cursor:pointer"><i style="color:black;" class="material-icons">mode_edit</i></span>
+          <span id="map_button" style="cursor:pointer"><i style="color:black;" class="material-icons">place</i></span>
+          <span id="plot_button" style="cursor:pointer"><i style="color:black;" class="material-icons">wb_sunny</i></span>
+          <span id="delete_button" href="#" style="cursor:pointer"><i style="color:black;" class="material-icons">delete_forever</i></span>
+        </div>
+        <br/>
+        <div class="mdl-cell mdl-cell--8-col-phone mdl-cell--12-col-tablet mdl-cell--6-col-desktop">
+          <div id="map"></div>
+        </div>
+        <div class="mdl-cell mdl-cell--8-col-phone mdl-cell--12-col-tablet mdl-cell--6-col-desktop">
+          <canvas id="myChart" width="100" height="40"></canvas>
+        </div>
+      </center>
+    </div>
+  </div>
+  <button id="find">Find</button>
+  <dialog id="dialog" class="mdl-dialog">
+    <center>
+      <h3>Create New Point</h3>
+      <form method="PUT">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="pointName" />
+          <label class="mdl-textfield__label" for="pointName">Point Name</label>
+          <span class="mdl-textfield__error">Only alphabet and no spaces, please!</span>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" pattern="^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$"
+            id="pointLatitude" />
+          <label class="mdl-textfield__label" for="pointLatitude">Latitude</label>
+          <span class="mdl-textfield__error">Enter valid latitude value, please!</span>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" pattern="^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$"
+            id="pointLongitude" />
+          <label class="mdl-textfield__label" for="pointLongitude">Longitude</label>
+          <span class="mdl-textfield__error">Enter valid longitude value, please!</span>
+        </div>
+        <button type="submit" id="insert_button" class="mdl-button mdl-js-button  mdl-js-ripple-effect">Submit</button>
+      </form>
+    </center>
+  </dialog>
+
+  <dialog id="edit_dialog" class="mdl-dialog">
+    <center>
+      <h3> Edit Point</h3>
+      <form method="PUT">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input id="edit_pointName" class="mdl-textfield__input" type="text" />
+          <label class="mdl-textfield__label" for="pointName">Point Name</label>
+          <span class="mdl-textfield__error">Only alphabet and no spaces, please!</span>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" pattern="^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$"
+            id="edit_pointLatitude" />
+          <label class="mdl-textfield__label" for="pointLatitude">Latitude</label>
+          <span class="mdl-textfield__error">Enter valid latitude value, please!</span>
+        </div>
+
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" pattern="^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$"
+            id="edit_pointLongitude" />
+          <label class="mdl-textfield__label" for="pointLongitude">Longitude</label>
+          <span class="mdl-textfield__error">Enter valid longitude value, please!</span>
+        </div>
+        <button type="submit" id="edit_button" class="mdl-button mdl-js-button  mdl-js-ripple-effect">Submit</button>
+      </form>
+    </center>
+  </dialog>
+
+  <script>
+    let map = new GMaps({
+      el: '#map',
+      zoom: 5,
+      lat: 38,
+      lng: 36
+    });
+    let dialog = document.querySelector('#dialog');
+    if (!dialog.showModal) {
+      dialogPolyfill.registerDialog(dialog);
+    }
+
+    let editDialog = document.querySelector('#edit_dialog');
+    if (!editDialog.showModal) {
+      dialogPolyfill.registerDialog(editDialog);
+    }
+    var config = {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: "Maximum",
+          fill: false,
+          backgroundColor: "#9fefe7",
+          borderColor: "#2fa4a4",
+          data: [],
+        }, {
+          label: "Minimum",
+          backgroundColor: "#4aa6ff",
+          borderColor: "#7ec0ee",
+          data: [],
+          fill: false,
+        }]
+      },
+      options: {
+        responsive: true,
+        title: {
+          display: true,
+          text: 'Chart.js Line Chart'
+        },
+        tooltips: {
+          mode: 'index',
+          intersect: false
+        },
+        hover: {
+          mode: 'nearest',
+          intersect: true
+        },
+        scales: {
+          xAxes: [{
+            display: true,
+            scaleLabel: {
+              display: true,
+              labelString: 'Month'
+            }
+          }],
+          yAxes: [{
+            display: true,
+            scaleLabel: {
+              display: true,
+              labelString: 'Value'
+            }
+          }]
+        }
+      }
+    };
+
+    let ctx = document.getElementById("myChart").getContext('2d');
+    let myChart = new Chart(ctx, config);
+    
+    function turnRowsToObjects () {
+      let selected_rows = $('.selected');
+      let map = Array.prototype.map,
+        mapped = map.call(selected_rows, (node) => {
+          let data = node.getElementsByTagName('td')
+          return {
+            "pointName": data[0].innerHTML,
+            pointLatitude: data[1].innerHTML,
+            pointLongitude: data[2].innerHTML
+          };
+        });
+      return mapped;
+    }
+
+    function removeMarkers() {
+      map.markers.forEach((element) => {
+        map.removeMarker(element);
+      });
+    }
+
+    $('#dataTable').DataTable({
+      "paging": false,
+      "ordering": false,
+      "info": false,
+      "bPaginate": false,
+      "bLengthChange": false,
+      "bFilter": false,
+      "bInfo": false,
+      "bAutoWidth": false,
+      className: 'mdl-data-table__cell--non-numeric',
+    });
+
+    $('#dataTable tbody').on('click', 'tr', function () {
+      $(this).toggleClass('selected');
+
+    });
+
+    $("#map_button").on('click', (event) => {
+      removeMarkers();
+      let target_items = turnRowsToObjects();
+      if (target_items.length == 0) {
+        map.panTo({
+          "lat": 38,
+          "lng": 36
+        });
+      }
+      target_items.forEach((element) => {
+        let marker = map.addMarker({
+          lat: element.pointLatitude,
+          lng: element.pointLongitude,
+          title: element.pointName,
+        });
+        map.setZoom(6);
+        map.panTo(marker.getPosition());
+      }, this);
+    });
+
+    $('#add_button').on('click', (event) => {
+      'use strict';
+      let fields = document.querySelectorAll("#dialog input");
+      fields[0].value = "";
+      fields[1].value = "";
+      fields[2].value = "";
+      dialog.showModal();
+    });
+
+    $('#dialog form').on('submit', (event) => {
+      $.ajax({
+        data: {
+          pointName: $('#pointName').val(),
+          pointLatitude: $('#pointLatitude').val(),
+          pointLongitude: $('#pointLongitude').val()
+        },
+        type: 'PUT',
+        url: '/api/point/new_post',
+      }).done((data) => {
+        $('#dataset').load('/data_template');
+        dialog.close();
+      });
+      event.preventDefault();
+    });
+
+    $('#edit_dialog form').on('submit', (event) => {
+      $('#dataset').load('/data_template');
+      $.ajax({
+        data: {
+          pointName: $('#edit_pointName').val(),
+          pointLatitude: $('#edit_pointLatitude').val(),
+          pointLongitude: $('#edit_pointLongitude').val()
+        },
+        type: 'PUT',
+        url: '/api/point/new_post',
+      }).done((data) => {
+        $('#dataset').load('/data_template');
+        editDialog.close();
+      });
+      event.preventDefault();
+    });
+
+    $('#edit_button').on('click', (event) => {
+      'use strict';
+      let items = turnRowsToObjects();
+      if (items.length == 0) {
+        let snackbarContainer = document.querySelector('#demo');
+        snackbarContainer.MaterialSnackbar.showSnackbar({
+          message: "Please select an element!"
+        });
+      } else if (items.length > 1) {
+        let snackbarContainer = document.querySelector('#demo');
+        snackbarContainer.MaterialSnackbar.showSnackbar({
+          message: "You can only edit one element at a time!"
+        });
+      } else {
+        let target_item = items[0];
+        let fields = document.querySelectorAll("#edit_dialog input");
+        fields[0].value = target_item.pointName;
+        fields[1].value = target_item.pointLatitude;
+        fields[2].value = target_item.pointLongitude;
+        editDialog.showModal();
+      }
+    });
+
+    $('#delete_button').on('click', () => {
+      let target_names = turnRowsToObjects().map((data) => {
+        return data.pointName
+      });
+
+      for (var i = 0; i < target_names.length; i++) {
+        var name = target_names[i];
+        console.log(target_names[i])
+        $.ajax({
+          type: 'DELETE',
+          url: '/api/point/' + name,
+        }).done((data) => {
+          if (data.error) {
+            'use strict';
+            let snackbarContainer = document.querySelector('#demo');
+            snackbarContainer.MaterialSnackbar.showSnackbar({
+              message: data.error
+            });
+          } else {
+            $('#dataset').load('/data_template');
+          }
+
+        });
+      }
+    });
+
+    $("#plot_button").on('click', (event) => {
+      $.ajax({
+        type: 'GET',
+        url: '/api/temp',
+      }).done((dataset) => {
+        console.log(dataset.map((data) => data.maximum))
+        myChart.config.data.labels = dataset.map((data) => data.day);
+        myChart.config.data.datasets[0].data = dataset.map((data) => data.maximum);
+        myChart.config.data.datasets[1].data = dataset.map((data) => data.minimum);
+        myChart.update();
+      });
+    });
+  </script>
+</body>
+
+</html>
