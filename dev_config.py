@@ -13,7 +13,7 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # maps api
-GOOGLEMAPS_KEY = 'your api key'
+GOOGLEMAPS_KEY = 'AIzaSyCNLRi0uHxotZV8IzJkpU0GQef259xAHnU'
 
 # forecast api
 FORECAST_API_URL = "http://35.187.52.226/api/v1.0/data/forecast/companies/intern"
