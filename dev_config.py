@@ -16,5 +16,5 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 GOOGLEMAPS_KEY = 'your api key'
 
 # forecast api
-FORECAST_API_URL = "your api url"
-FORECAST_API_KEY = "your api key"
+FORECAST_API_URL = "http://35.187.52.226/api/v1.0/data/forecast/companies/intern"
+FORECAST_API_KEY = "i7nAtke5r7n5"
