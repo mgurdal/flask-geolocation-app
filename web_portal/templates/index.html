@@ -32,6 +32,10 @@
       height: 400px;
     }
 
+    #notification {
+      font-size: 18px;
+    }
+
     .selected {
       background-color: #eee;
     }
@@ -43,27 +47,31 @@
 
     tbody {
       height: 400px;
-      /* Just for the demo          */
       overflow-y: auto;
-      /* Trigger vertical scroll    */
       overflow-x: hidden;
-      /* Hide the horizontal scroll */
     }
 
     .mdl-data-table {
       width: 50%;
     }
 
+    th .sorting_asc,
+    th .sorting_desc {
+      float: right;
+    }
+
+    #dataTable_filter {
+      margin-left: 62%;
+      margin-right: 38%;
+    }
+
     table {
       width: 10%;
-      /* Optional */
     }
 
     tbody td,
     thead th {
-
       width: 50%;
-      /* Optional */
     }
 
     th:first-child,
@@ -71,12 +79,16 @@
       float: left;
     }
 
+    #button_group {
+      margin-left: 25%;
+    }
+
     #button_group span {
       float: left;
     }
 
     #button_group span i {
-      font-size: 3em;
+      font-size: 2.6em;
     }
 
     .mdl-data-table thead .mdl-data-table__select {
@@ -87,12 +99,12 @@
 </head>
 
 <body>
-
+  <div id="notification" class="mdl-js-snackbar mdl-snackbar">
+    <div class="mdl-snackbar__text"></div>
+    <button class="mdl-snackbar__action" type="button"></button>
+  </div>
   <div class="mdl-grid">
-    <div id="demo" class="mdl-js-snackbar mdl-snackbar">
-      <div class="mdl-snackbar__text"></div>
-      <button class="mdl-snackbar__action" type="button"></button>
-    </div>
+
     <div class="mdl-cell mdl-cell--12-col-phone mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
 
       <center>
@@ -102,7 +114,15 @@
 
 
     <div class="mdl-cell mdl-cell--8-col-phone mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
+      <div id="button_group" class="mdl-cell mdl-cell--8-col-phone mdl-cell--12-col-tablet mdl-cell--6-col-desktop">
+        <span id="add_button" class="dialog-button" style="cursor:pointer"><i style="color:black;" class="material-icons">add</i></span>
+        <span id="edit_button" class="edit-dialog-button" style="cursor:pointer"><i style="color:black;" class="material-icons">mode_edit</i></span>
+        <span id="map_button" style="cursor:pointer"><i style="color:black;" class="material-icons">place</i></span>
+        <span id="plot_button" style="cursor:pointer"><i style="color:black;" class="material-icons">wb_sunny</i></span>
+        <span id="delete_button" href="#" style="cursor:pointer"><i style="color:black;" class="material-icons">delete_forever</i></span>
+      </div>
       <center>
+
         <table id="dataTable" class="mdl-data-table" width="100%">
           <thead>
             <tr>
@@ -124,14 +144,7 @@
             {% endfor %}
           </tbody>
         </table>
-        <div id="button_group" class="mdl-cell mdl-cell--8-col-phone mdl-cell--12-col-tablet mdl-cell--6-col-desktop">
-          <span id="add_button" class="dialog-button" style="cursor:pointer"><i style="color:black;" class="material-icons">add</i></span>
-          <span id="edit_button" class="edit-dialog-button" style="cursor:pointer"><i style="color:black;" class="material-icons">mode_edit</i></span>
-          <span id="map_button" style="cursor:pointer"><i style="color:black;" class="material-icons">place</i></span>
-          <span id="plot_button" style="cursor:pointer"><i style="color:black;" class="material-icons">wb_sunny</i></span>
-          <span id="delete_button" href="#" style="cursor:pointer"><i style="color:black;" class="material-icons">delete_forever</i></span>
-        </div>
-        <br/>
+
         <div class="mdl-cell mdl-cell--8-col-phone mdl-cell--12-col-tablet mdl-cell--6-col-desktop">
           <div id="map"></div>
         </div>
@@ -141,29 +154,29 @@
       </center>
     </div>
   </div>
-  <button id="find">Find</button>
+
   <dialog id="dialog" class="mdl-dialog">
     <center>
       <h3>Create New Point</h3>
       <form method="PUT">
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <input class="mdl-textfield__input" type="text" id="pointName" />
+          <input class="mdl-textfield__input" type="text" pattern="^[a-zA-Z ]{2,30}" id="pointName" />
           <label class="mdl-textfield__label" for="pointName">Point Name</label>
-          <span class="mdl-textfield__error">Only alphabet and no spaces, please!</span>
+          <span class="mdl-textfield__error">Enter a valid name please, please!</span>
         </div>
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
           <input class="mdl-textfield__input" type="text" pattern="^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$"
             id="pointLatitude" />
           <label class="mdl-textfield__label" for="pointLatitude">Latitude</label>
-          <span class="mdl-textfield__error">Enter valid latitude value, please!</span>
+          <span class="mdl-textfield__error">Enter a valid latitude value, please!</span>
         </div>
 
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
           <input class="mdl-textfield__input" type="text" pattern="^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$"
             id="pointLongitude" />
           <label class="mdl-textfield__label" for="pointLongitude">Longitude</label>
-          <span class="mdl-textfield__error">Enter valid longitude value, please!</span>
+          <span class="mdl-textfield__error">Enter a valid longitude value, please!</span>
         </div>
         <button type="submit" id="insert_button" class="mdl-button mdl-js-button  mdl-js-ripple-effect">Submit</button>
       </form>
@@ -172,14 +185,8 @@
 
   <dialog id="edit_dialog" class="mdl-dialog">
     <center>
-      <h3> Edit Point</h3>
+      <h3 id="edit_pointName"></h3>
       <form method="PUT">
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-          <input id="edit_pointName" class="mdl-textfield__input" type="text" />
-          <label class="mdl-textfield__label" for="pointName">Point Name</label>
-          <span class="mdl-textfield__error">Only alphabet and no spaces, please!</span>
-        </div>
-
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
           <input class="mdl-textfield__input" type="text" pattern="^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$"
             id="edit_pointLatitude" />
@@ -193,7 +200,7 @@
           <label class="mdl-textfield__label" for="pointLongitude">Longitude</label>
           <span class="mdl-textfield__error">Enter valid longitude value, please!</span>
         </div>
-        <button type="submit" id="edit_button" class="mdl-button mdl-js-button  mdl-js-ripple-effect">Submit</button>
+        <button type="submit" id="edit_button" class="mdl-button mdl-js-button mdl-js-ripple-effect">Submit</button>
       </form>
     </center>
   </dialog>
@@ -205,6 +212,9 @@
       lat: 38,
       lng: 36
     });
+
+    let snackbarContainer = document.querySelector('#notification');
+
     let dialog = document.querySelector('#dialog');
     if (!dialog.showModal) {
       dialogPolyfill.registerDialog(dialog);
@@ -214,29 +224,18 @@
     if (!editDialog.showModal) {
       dialogPolyfill.registerDialog(editDialog);
     }
-    var config = {
+
+    let config = {
       type: 'line',
       data: {
         labels: [],
-        datasets: [{
-          label: "Maximum",
-          fill: false,
-          backgroundColor: "#9fefe7",
-          borderColor: "#2fa4a4",
-          data: [],
-        }, {
-          label: "Minimum",
-          backgroundColor: "#4aa6ff",
-          borderColor: "#7ec0ee",
-          data: [],
-          fill: false,
-        }]
+        datasets: []
       },
       options: {
         responsive: true,
         title: {
           display: true,
-          text: 'Chart.js Line Chart'
+          text: 'Daily Temperature Values'
         },
         tooltips: {
           mode: 'index',
@@ -251,14 +250,14 @@
             display: true,
             scaleLabel: {
               display: true,
-              labelString: 'Month'
+              labelString: 'Days'
             }
           }],
           yAxes: [{
             display: true,
             scaleLabel: {
               display: true,
-              labelString: 'Value'
+              labelString: 'Temperature'
             }
           }]
         }
@@ -267,8 +266,8 @@
 
     let ctx = document.getElementById("myChart").getContext('2d');
     let myChart = new Chart(ctx, config);
-    
-    function turnRowsToObjects () {
+
+    function getSelectedRows() {
       let selected_rows = $('.selected');
       let map = Array.prototype.map,
         mapped = map.call(selected_rows, (node) => {
@@ -288,32 +287,34 @@
       });
     }
 
-    $('#dataTable').DataTable({
+    let datatable = $('#dataTable').DataTable({
       "paging": false,
-      "ordering": false,
+      "ordering": true,
       "info": false,
       "bPaginate": false,
-      "bLengthChange": false,
-      "bFilter": false,
+      "bLengthChange": true,
+      "bFilter": true,
       "bInfo": false,
       "bAutoWidth": false,
-      className: 'mdl-data-table__cell--non-numeric',
+      columnDefs: [{
+        className: 'mdl-data-table__cell--non-numeric'
+      }]
     });
 
     $('#dataTable tbody').on('click', 'tr', function () {
       $(this).toggleClass('selected');
-
     });
 
     $("#map_button").on('click', (event) => {
       removeMarkers();
-      let target_items = turnRowsToObjects();
+      let target_items = getSelectedRows();
       if (target_items.length == 0) {
         map.panTo({
           "lat": 38,
           "lng": 36
         });
       }
+
       target_items.forEach((element) => {
         let marker = map.addMarker({
           lat: element.pointLatitude,
@@ -335,11 +336,21 @@
     });
 
     $('#dialog form').on('submit', (event) => {
+      event.preventDefault();
+      let name = $('#pointName').val();
+      let lat = $('#pointLatitude').val();
+      let lng = $('#pointLongitude').val();
+      if (name == "" || lat == "" || lng == "") {
+        snackbarContainer.MaterialSnackbar.showSnackbar({
+          message: "Please fill the blank fields!"
+        });
+        return;
+      }
       $.ajax({
         data: {
-          pointName: $('#pointName').val(),
-          pointLatitude: $('#pointLatitude').val(),
-          pointLongitude: $('#pointLongitude').val()
+          pointName: name,
+          pointLatitude: lat,
+          pointLongitude: lng
         },
         type: 'PUT',
         url: '/api/point/new_post',
@@ -347,64 +358,65 @@
         $('#dataset').load('/data_template');
         dialog.close();
       });
-      event.preventDefault();
     });
 
     $('#edit_dialog form').on('submit', (event) => {
-      $('#dataset').load('/data_template');
+      event.preventDefault();
       $.ajax({
         data: {
-          pointName: $('#edit_pointName').val(),
+          pointName: document.getElementById('edit_pointName').innerText,
           pointLatitude: $('#edit_pointLatitude').val(),
           pointLongitude: $('#edit_pointLongitude').val()
         },
-        type: 'PUT',
+        type: 'post',
         url: '/api/point/new_post',
       }).done((data) => {
         $('#dataset').load('/data_template');
-        editDialog.close();
+        
       });
-      event.preventDefault();
+      editDialog.close();
+
     });
 
     $('#edit_button').on('click', (event) => {
       'use strict';
-      let items = turnRowsToObjects();
+      let items = getSelectedRows();
       if (items.length == 0) {
-        let snackbarContainer = document.querySelector('#demo');
+
         snackbarContainer.MaterialSnackbar.showSnackbar({
           message: "Please select an element!"
         });
       } else if (items.length > 1) {
-        let snackbarContainer = document.querySelector('#demo');
         snackbarContainer.MaterialSnackbar.showSnackbar({
           message: "You can only edit one element at a time!"
         });
       } else {
         let target_item = items[0];
-        let fields = document.querySelectorAll("#edit_dialog input");
-        fields[0].value = target_item.pointName;
-        fields[1].value = target_item.pointLatitude;
-        fields[2].value = target_item.pointLongitude;
+
+        let point_name = document.getElementById('edit_pointName');
+        let point_lat = document.getElementById("edit_pointLatitude");
+        let point_lng = document.getElementById("edit_pointLongitude");
+
+        point_name.innerText = target_item.pointName;
+        point_lat.value = target_item.pointLatitude;
+        point_lng.value = target_item.pointLongitude;
         editDialog.showModal();
       }
     });
 
     $('#delete_button').on('click', () => {
-      let target_names = turnRowsToObjects().map((data) => {
+      let target_names = getSelectedRows().map((data) => {
         return data.pointName
       });
 
       for (var i = 0; i < target_names.length; i++) {
         var name = target_names[i];
-        console.log(target_names[i])
         $.ajax({
           type: 'DELETE',
           url: '/api/point/' + name,
         }).done((data) => {
           if (data.error) {
             'use strict';
-            let snackbarContainer = document.querySelector('#demo');
             snackbarContainer.MaterialSnackbar.showSnackbar({
               message: data.error
             });
@@ -417,14 +429,46 @@
     });
 
     $("#plot_button").on('click', (event) => {
+      myChart.config.data.datasets = [];
+      let rows = getSelectedRows();
+      if (rows.length == 0) {
+        snackbarContainer.MaterialSnackbar.showSnackbar({
+          message: "You should select at least 1 element!"
+        });
+        return;
+      }
       $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: '/api/temp',
+        dataType: 'json',
+        data: {
+          points: getSelectedRows()
+        }
       }).done((dataset) => {
-        console.log(dataset.map((data) => data.maximum))
-        myChart.config.data.labels = dataset.map((data) => data.day);
-        myChart.config.data.datasets[0].data = dataset.map((data) => data.maximum);
-        myChart.config.data.datasets[1].data = dataset.map((data) => data.minimum);
+        myChart.config.data.labels = dataset[0].data.map((data) => data.day);
+
+        dataset.forEach((element) => {
+          max_config = {
+            backgroundColor: "#ef9a9a",
+            borderColor: "#b71c1c",
+            data: [],
+            fill: false,
+          }
+          min_config = {
+            backgroundColor: "#4aa6ff",
+            borderColor: "#7ec0ee",
+            data: [],
+            fill: false,
+          }
+          max_config.data = element['data'].map((data) => data.maximum)
+          max_config.label = element.label + " Maximum"
+          myChart.config.data.datasets.push(min_config)
+
+          min_config.label = element.label + " Minimum"
+          min_config.data = element['data'].map((data) => data.minimum)
+          myChart.config.data.datasets.push(max_config)
+        }, this);
+
         myChart.update();
       });
     });

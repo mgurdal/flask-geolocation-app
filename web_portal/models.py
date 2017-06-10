@@ -15,13 +15,12 @@ class Point(db.Model):
         pointLongitude (:Column:`float`): The longitude value for the point.
     '''
     id = db.Column(db.Integer, primary_key=True)
-    pointName = db.Column(db.String(120))
-    pointLatitude = db.Column(db.FLOAT(), unique=True)
-    pointLongitude = db.Column(db.FLOAT(), unique=True)
+    pointName = db.Column(db.String(120), unique=True)
+    pointLatitude = db.Column(db.FLOAT())
+    pointLongitude = db.Column(db.FLOAT())
 
-    def __init__(self, pointName, pointLatitude, pointLongitude):
+    def __init__(self, point_name, point_latitude, point_longitude):
         ''' Initialize the point attributes.''' 
-        self.pointName = pointName
-        self.pointLatitude = pointLatitude
-        self.pointLongitude = pointLongitude
-
+        self.pointName = point_name
+        self.pointLatitude = point_latitude
+        self.pointLongitude = point_longitude
