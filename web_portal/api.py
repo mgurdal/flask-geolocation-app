@@ -1,27 +1,24 @@
 """
     Create APIs
 """
-
-import random
-import requests
 from datetime import datetime
 
+import requests
 from flask import request
-from flask import jsonify
 from flask_restful import Resource
 from flask_restful import Api
 from sqlalchemy.exc import IntegrityError
 
-from .main import app
-from .main import db
+from main import app
+from main import db
 from .models import Point
 
-
 class TempApi(Resource):
-    """ Dummy temperature api """
+    """ Temperature api """
     def post(self):
         """ Generates random weekly maximum and minimum temp. value """
         dataset = []
+
         name_key = 'points[{}][pointName]'
         lat_key = 'points[{}][pointLatitude]'
         lng_key = 'points[{}][pointLongitude]'
@@ -81,6 +78,7 @@ class PointApi(Resource):
 
     def post(self, point_name):
         """ """
+        
         try:
             if Point.query.filter_by(pointName=request.form['pointName']).first():
                 point_query = Point.query.filter_by(pointName=request.form['pointName'])
@@ -91,6 +89,7 @@ class PointApi(Resource):
                 point = Point(**{name:value for name, value in request.form.items()})
                 db.session.add(point)
                 db.session.commit()
+                point.pointName # necsessary
                 return self.serialize(point)
 
         except TypeError as could_not_create:
@@ -111,15 +110,15 @@ class PointApi(Resource):
                 return {"error":"could not delete"}
             else:
                 return {"status":"success"}
-
         except TypeError:
             return {'error':"Invalid Arguments!"}
         except IntegrityError:
-            return {"error":"could not delete"}
+            return {"error":"Could not delete"}
 
     def serialize(self, point):
         """ Basic model to json """
-        return {name:value for name, value in vars(point).items() if isinstance(value, (str, float, int))}
+        return {name:value for name, value in vars(point).items()
+                if isinstance(value, (str, float, int))}
 
 class PointListApi(Resource):
     """ """
@@ -128,7 +127,8 @@ class PointListApi(Resource):
         points = Point.query.all()
         # basic model to json
         if points:
-            json_points = [{name:value for name, value in vars(point).items() if type(value) in (str, float, int)} for point in points]
+            json_points = [{name:value for name, value in vars(point).items()
+                            if isinstance(value, (str, float, int))} for point in points]
             return {'point':json_points}
         else:
             return {'point':None}

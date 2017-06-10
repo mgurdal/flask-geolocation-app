@@ -19,7 +19,7 @@
 
   <script src="/static/js/gmaps.min.js"></script>
   <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZzeHhs-8JZ7i18MjFuM35dJHq70n3Hx4">
+  <script src="https://maps.googleapis.com/maps/api/js?key={{maps_api_key}}">
   </script>
   <!-- styles -->
   <style>
@@ -270,7 +270,7 @@
         mapped = map.call(selected_rows, (node) => {
           let data = node.getElementsByTagName('td')
           return {
-            "pointName": data[0].innerHTML,
+            pointName: data[0].innerHTML,
             pointLatitude: data[1].innerHTML,
             pointLongitude: data[2].innerHTML
           };
@@ -349,7 +349,7 @@
           pointLatitude: lat,
           pointLongitude: lng
         },
-        type: 'PUT',
+        type: 'POST',
         url: '/api/point/new_post',
       }).done((data) => {
         $('#dataset').load('/data_template');

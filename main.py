@@ -16,7 +16,7 @@ app = Flask(__name__,  static_url_path='/static')
 app.config.from_pyfile('dev_config.py')
 db = SQLAlchemy(app)
 
-from .views import *
+from web_portal.views import *
 
 if __name__ == "__main__":
     db.create_all()

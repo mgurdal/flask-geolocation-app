@@ -1,14 +1,15 @@
 
 """
-Define global configuration variables in here
+Define test configuration variables in here
 """
 DEBUG = True
+TESTING = True
 
 # tokens
 SECRET_KEY = "your secret key"
 
 # database
-SQLALCHEMY_DATABASE_URI = 'sqlite:///point.db'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # maps api
