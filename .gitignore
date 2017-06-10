@@ -1,7 +1,5 @@
 env
 *.pyc
 __pycache__
-dev_config.py
-test_config.py
 point.db
 test.db
