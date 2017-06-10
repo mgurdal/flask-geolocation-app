@@ -12,8 +12,8 @@ from flask_restful import Resource
 from flask_restful import Api
 from sqlalchemy.exc import IntegrityError
 
-from myapp import app
-from myapp import db
+from main import app
+from main import db
 from models import Point
 
 

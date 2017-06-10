@@ -2,7 +2,7 @@
 Create database models here.
 """
 from flask_sqlalchemy import SQLAlchemy
-from myapp import db
+from main import db
 
 class Point(db.Model):
     '''

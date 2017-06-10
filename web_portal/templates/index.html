@@ -3,7 +3,7 @@
 
 <head lang="en">
   <meta charset="UTF-8">
-  <title>Flask React</title>
+  <title>Flask Geolocation App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -108,7 +108,7 @@
     <div class="mdl-cell mdl-cell--12-col-phone mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
 
       <center>
-        <h1>Web Portal</h1>
+        <h1>Flask Geolocation App</h1>
       </center>
     </div>
 
@@ -126,17 +126,14 @@
         <table id="dataTable" class="mdl-data-table" width="100%">
           <thead>
             <tr>
-
               <th style="padding-top:17px">pointName</th>
               <th>pointLatitude</th>
               <th>pointLongitude</th>
-
             </tr>
           </thead>
           <tbody id="dataset">
             {% for point in points %}
             <tr>
-
               <td>{{ point.pointName }}</td>
               <td>{{ point.pointLatitude }}</td>
               <td>{{ point.pointLongitude }}</td>

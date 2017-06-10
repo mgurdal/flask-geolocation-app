@@ -5,7 +5,7 @@ Create views
 from flask import render_template
 from flask import request
 
-from myapp import app, db
+from main import app, db
 from models import Point
 import api
 
