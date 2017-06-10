@@ -1,6 +1,6 @@
 
 """
-Define test configuration variables in here
+Define configuration variables in here
 """
 DEBUG = True
 TESTING = True
