@@ -1,5 +1,5 @@
 env
-.pyc
+*.pyc
 __pycache__
 dev_config.py
 test_config.py
