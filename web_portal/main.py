@@ -13,7 +13,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import DeclarativeMeta
 
 app = Flask(__name__,  static_url_path='/static')
-app.config.from_pyfile('config.py')
+app.config.from_pyfile('dev_config.py')
 db = SQLAlchemy(app)
 from views import *
 
