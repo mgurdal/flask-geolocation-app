@@ -2,7 +2,7 @@
 Create database models here.
 """
 from flask_sqlalchemy import SQLAlchemy
-from main import db
+from .main import db
 
 class Point(db.Model):
     '''
@@ -19,8 +19,8 @@ class Point(db.Model):
     pointLatitude = db.Column(db.FLOAT())
     pointLongitude = db.Column(db.FLOAT())
 
-    def __init__(self, point_name, point_latitude, point_longitude):
+    def __init__(self, pointName, pointLatitude, pointLongitude):
         ''' Initialize the point attributes.''' 
-        self.pointName = point_name
-        self.pointLatitude = point_latitude
-        self.pointLongitude = point_longitude
+        self.pointName = pointName
+        self.pointLatitude = pointLatitude
+        self.pointLongitude = pointLongitude

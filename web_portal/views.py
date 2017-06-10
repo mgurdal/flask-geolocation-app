@@ -5,9 +5,9 @@ Create views
 from flask import render_template
 from flask import request
 
-from main import app, db
-from models import Point
-import api
+from .main import app, db
+from .models import Point
+from . import api
 
 @app.route('/', methods=['GET',])
 def index():

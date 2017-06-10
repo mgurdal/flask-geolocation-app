@@ -12,9 +12,9 @@ from flask_restful import Resource
 from flask_restful import Api
 from sqlalchemy.exc import IntegrityError
 
-from main import app
-from main import db
-from models import Point
+from .main import app
+from .main import db
+from .models import Point
 
 
 class TempApi(Resource):
